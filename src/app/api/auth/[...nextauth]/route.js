@@ -1,8 +1,30 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import axios from "axios";
+import Github from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 
 export const authOptions = {
   providers: [
+    // Add Google Provider or any other providers if needed
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          scope: "openid email profile https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
+          access_type: "offline",
+          prompt: "consent"
+        }
+      }
+    }),
+    // Github provider can also be added here
+    Github({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+      authorization: {params: { scope: "read:user user:email" } }
+    }),
+    // Credentials Provider for email/password authentication
     CredentialsProvider({
       name: "Credentials",
       // Credentials are used to generate the necessary form fields
@@ -17,24 +39,29 @@ export const authOptions = {
         // 1. Make a POST request to your Express backend's login endpoint
         const expressLoginUrl = process.env.EXPRESS_API_BASE_URL + '/api/auth/login';
 
-        const res = await fetch(expressLoginUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: credentials.email,
-            password: credentials.password,
-          }),
-        });
+        try {
+          if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await res.json();
+          const response = await axios.post(
+            expressLoginUrl,
+            {
+              email: credentials.email,
+              password: credentials.password,
+            },
+            {
+              headers: { 'Content-Type': 'application/json' },
+            }
+          );
 
-        if (res.ok && user) {
-          return user;
-        } 
-        
-        // 3. Return null if user validation failed (NextAuth will handle the error)
+          const user = response.data;
+
+          if (response.status === 200 && user) {
+            return user;
+          }
+        } catch (error) {
+          // login failed
+          return null;
+        }
         return null;
       }
     }),
