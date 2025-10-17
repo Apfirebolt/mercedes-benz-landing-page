@@ -1,60 +1,46 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { signIn } from 'next-auth/react';
-
-// Mocked router to simulate navigation
-const mockRouter = {
-  push: (path) => console.log(`[Router Mock] Simulated Navigation to: ${path}`),
-};
-
-// Mocked session status for demonstration purposes
-const MOCK_SESSION_STATE = {
-    UNAUTHENTICATED: 'unauthenticated',
-    AUTHENTICATED: 'authenticated'
-};
+import { signIn, useSession, signOut } from 'next-auth/react';
 
 export default function Login() {
+  // Mock session state for demonstration purposesconst { data: session, status } = useSession();
+  const { data: session, status } = useSession();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
-    const formData = new URLSearchParams();
-    formData.append('email', email);
-    formData.append('password', password);
-    // Crucial: The callbackUrl is where NextAuth redirects on success (if redirect: true).
-    formData.append('callbackUrl', '/'); 
-    
-    let result;
-    
-    try {
-        result = await signIn('credentials', {
-            redirect: false, // We handle redirection manually in this mock
-            email,
-            password,
-        });
-        
-    } catch (apiError) {
-        console.error("Network or API call failed:", apiError);
-        // Handle network issues or unhandled exceptions
-        result = { ok: false, error: 'Network error: Could not reach NextAuth endpoint.' };
+    const emailTrim = email.trim();
+    const passwordVal = password;
+
+    if (!emailTrim || !passwordVal) {
+      setError('Please provide both email and password.');
+      return;
     }
 
-    setLoading(false);
+    setLoading(true);
 
-    if (result && result.error) {
-      // 2. Display the error message received from the NextAuth route
-      setError(result.error);
-      setSessionStatus(MOCK_SESSION_STATE.UNAUTHENTICATED);
-    } else if (result && result.ok) {
-      // 3. Login successful, session cookie is now set by NextAuth
-      setError('Login successful! Check the console for simulated redirection to /. The Express API was hit.');
-      setSessionStatus(MOCK_SESSION_STATE.AUTHENTICATED);
-    } else {
-        // Catch any unexpected response formats
+    try {
+      const result = await signIn('credentials', {
+        redirect: false, // keep manual redirect handling in this mock
+        email: emailTrim,
+        password: passwordVal,
+      });
+
+      if (result?.error) {
+        setError(result.error);
+      } else if (result?.ok) {
+        // Successful mock login
+        setError('Login successful! Check the console for simulated redirection to /. The Express API was hit.');
+      } else {
         setError('An unexpected response was received during authentication.');
-        setSessionStatus(MOCK_SESSION_STATE.UNAUTHENTICATED);
+      }
+    } catch (err) {
+      console.error('Network or API call failed:', err);
+      setError('Network error: Could not reach NextAuth endpoint.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,26 +48,6 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [sessionStatus, setSessionStatus] = useState(MOCK_SESSION_STATE.UNAUTHENTICATED);
-
-  // In a real app, this useEffect would watch useSession().status and trigger a redirect.
-  useEffect(() => {
-    if (sessionStatus === MOCK_SESSION_STATE.AUTHENTICATED) {
-        // Successful mock login
-        mockRouter.push('/'); 
-    }
-  }, [sessionStatus]);
-
-  // If successfully authenticated in the mock, show a redirection message
-  if (sessionStatus === MOCK_SESSION_STATE.AUTHENTICATED && !loading) {
-     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-            <div className="text-xl font-medium text-success">
-                Login successful.
-            </div>
-        </div>
-     );
-  }
 
   return (
     <div className="flex items-center justify-center p-4 bg-secondary font-sans">
@@ -140,6 +106,23 @@ export default function Login() {
             ) : 'Log In'}
           </button>
         </form>
+
+        {session?.user && (
+          <div className="pt-4 mt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-700">
+                Signed in as <span className="font-medium">{session.user.email || session.user.name}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => signOut()}
+                className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
