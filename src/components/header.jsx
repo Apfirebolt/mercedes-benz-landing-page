@@ -10,10 +10,11 @@ const Header = () => {
   const [menuItems, setMenuItems] = useState([
     { name: 'Vehicles', link: '/vehicles' },
     { name: 'Art & Culture', link: '/art-culture' },
-    { name: 'Sustainability', link: '/sustainability' },
     { name: 'Design', link: '/design' },
     { name: 'Innovation', link: '/innovation' },
     { name: 'Exclusive', link: '/exclusive' },
+    { name: 'Login', link: '/login' },
+    { name: 'Register', link: '/register' },
   ]);
 
   const toggleMenu = () => {
@@ -36,7 +37,7 @@ const Header = () => {
   return (
     <header className="bg-primary text-accent">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl w-1/2 bg-amber-800 p-5 font-bold flex items-center">
+        <h1 className="text-2xl w-1/2 p-5 font-bold flex items-center">
           <Link href="/">Mercedes-Benz</Link>
           <FaBars className="text-2xl ml-auto cursor-pointer sm:hidden" onClick={toggleMenu} />
         </h1>

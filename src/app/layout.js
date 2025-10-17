@@ -1,4 +1,6 @@
 import AuthProvider from "@/components/AuthProvider";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -23,12 +25,15 @@ export default function RootLayout({ children }) {
   return (
     <AuthProvider>
       <html lang="en">
+
         <body>
+          <Header />
           <div
             className={`${geistSans.variable} ${geistMono.variable} font-sans`}
           >
             {children}
           </div>
+          <Footer />
         </body>
       </html>
     </AuthProvider>

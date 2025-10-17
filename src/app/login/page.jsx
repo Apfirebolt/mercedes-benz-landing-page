@@ -3,12 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 
-// =================================================================
-// MOCKED DEPENDENCIES
-// The actual 'signIn' utility and 'useRouter' cannot be imported 
-// in this environment, so we keep the mocks for flow control.
-// =================================================================
-
 // Mocked router to simulate navigation
 const mockRouter = {
   push: (path) => console.log(`[Router Mock] Simulated Navigation to: ${path}`),
@@ -21,21 +15,6 @@ const MOCK_SESSION_STATE = {
 };
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [sessionStatus, setSessionStatus] = useState(MOCK_SESSION_STATE.UNAUTHENTICATED);
-
-  // In a real app, this useEffect would watch useSession().status and trigger a redirect.
-  useEffect(() => {
-    if (sessionStatus === MOCK_SESSION_STATE.AUTHENTICATED) {
-        // Successful mock login
-        mockRouter.push('/'); 
-    }
-  }, [sessionStatus]);
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -79,33 +58,42 @@ export default function Login() {
     }
   };
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [sessionStatus, setSessionStatus] = useState(MOCK_SESSION_STATE.UNAUTHENTICATED);
+
+  // In a real app, this useEffect would watch useSession().status and trigger a redirect.
+  useEffect(() => {
+    if (sessionStatus === MOCK_SESSION_STATE.AUTHENTICATED) {
+        // Successful mock login
+        mockRouter.push('/'); 
+    }
+  }, [sessionStatus]);
+
   // If successfully authenticated in the mock, show a redirection message
   if (sessionStatus === MOCK_SESSION_STATE.AUTHENTICATED && !loading) {
      return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
-            <div className="text-xl font-medium text-green-600">
-                Login successful. Simulated redirection is logged to the console.
+            <div className="text-xl font-medium text-success">
+                Login successful.
             </div>
         </div>
      );
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100 font-sans">
+    <div className="flex items-center justify-center p-4 bg-secondary font-sans">
       <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-2xl rounded-xl">
         <h1 className="text-3xl font-extrabold text-center text-gray-900">
-          Sign In
+          Login
         </h1>
-        <p className="text-center text-sm text-gray-600">
-          This form now hits your `/api/auth/callback/credentials` route.
-        </p>
-        
         {error && (
           <div className="p-3 text-sm font-medium text-red-700 bg-red-100 border border-red-300 rounded-lg">
             {error}
           </div>
         )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
