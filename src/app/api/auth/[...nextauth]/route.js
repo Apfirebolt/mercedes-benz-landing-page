@@ -74,9 +74,9 @@ export const authOptions = {
         token.id = user.id;
         token.email = user.email; // Add other properties as needed
       }
+      console.log("JWT Token:", token);
       return token;
     },
-    // 2. Add the ID from the JWT to the session object
     async session({ session, token }) {
       session.user.id = token.id;
       return session;
