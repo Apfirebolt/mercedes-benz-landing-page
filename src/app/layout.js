@@ -1,3 +1,4 @@
+import AuthProvider from "@/components/AuthProvider";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -11,14 +12,25 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata = {
+  title: "Mercedes-Benz | The best or nothing",
+  description:
+    "Find your dream car with Mercedes-Benz. Explore our extensive range of luxury vehicles and experience unparalleled performance and design.",
+  keywords: "luxury cars, mercedes-benz, high performance",
+};
+
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-violet-500`}
-      >
-        {children}
-      </body>
-    </html>
+    <AuthProvider>
+      <html lang="en">
+        <body>
+          <div
+            className={`${geistSans.variable} ${geistMono.variable} font-sans`}
+          >
+            {children}
+          </div>
+        </body>
+      </html>
+    </AuthProvider>
   );
 }

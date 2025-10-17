@@ -28,6 +28,24 @@ const Footer = () => {
                     </p>
                 </div>
             </div>
+            <div className="mt-8 border-t border-accent pt-4">
+                <ul className="flex flex-wrap justify-center gap-4 text-sm">
+                    <li><a href="#" className="hover:underline">Provider</a></li>
+                    <li><a href="#" className="hover:underline">Legal Notice</a></li>
+                    <li><a href="#" className="hover:underline">Settings</a></li>
+                    <li><a href="#" className="hover:underline">Privacy</a></li>
+                    <li><a href="#" className="hover:underline">Contact</a></li>
+                    <li><a href="#" className="hover:underline">Third Party License Notices</a></li>
+                    <li><a href="#" className="hover:underline">Don't Sell My Personal Information (CCPA)</a></li>
+                </ul>
+                <div className="flex justify-center mt-4">
+                    <img 
+                        src="https://i.pinimg.com/736x/3a/2a/c4/3a2ac47e1f4f22ba320e72110af25d30.jpg" 
+                        alt="Mercedes-Benz Logo" 
+                        className="h-16 w-auto"
+                    />
+                </div>
+            </div>
         </footer>
     );
 };

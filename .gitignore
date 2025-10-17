@@ -63,3 +63,6 @@ package-lock.json
 .eslintcache
 *v8.log
 /lib/
+
+// ignore .next folder except for the static folder
+.next/*

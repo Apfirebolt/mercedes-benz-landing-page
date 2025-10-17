@@ -5,6 +5,7 @@ import React, { Fragment } from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import Social from "@/components/social";
 
 const Home = () => {
   return (
@@ -48,7 +49,9 @@ const Home = () => {
             </button>
           </motion.div>
         </section>
+        <Social />
       </main>
+
       <Footer />
     </Fragment>
   );

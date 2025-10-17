@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 import React, { Fragment } from "react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
@@ -7,7 +9,18 @@ export const metadata = {
   description: "Learn more about Animix.",
 };
 
+// This line runs securely on the server
+  const session = await getServerSession(authOptions);
+
+  console.log("About Page Session:", !session);
+
 const AboutPage = () => {
+
+  if (!session) {
+    // Handle unauthenticated state (e.g., redirect the user)
+    return <p>Access Denied. Please sign in.</p>;
+  }
+
   return (
     <Fragment>
       <Header />
